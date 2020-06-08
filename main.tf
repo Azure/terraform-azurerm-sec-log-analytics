@@ -4,9 +4,9 @@ provider "azurerm" {
 }
 
 module "naming" {
-  source = "git@github.com:Azure/terraform-azurerm-naming"
-  suffix = var.suffix
+  source = "git::https://github.com/Azure/terraform-azurerm-naming"
   prefix = var.prefix
+  suffix = var.suffix
 }
 
 resource "azurerm_log_analytics_workspace" "log_analytics" {

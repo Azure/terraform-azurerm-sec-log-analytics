@@ -3,23 +3,24 @@ provider "azurerm" {
   features {}
 }
 
-resource "random_string" "resource_group_name_prefix" {
-  length    = 5
-  special   = false
-  lower     = true
-  min_lower = 5
+locals {
+  unique_name_stub = substr(module.naming.unique-seed, 0, 5)
+}
+
+module "naming" {
+  source = "git::https://github.com/Azure/terraform-azurerm-naming"
 }
 
 resource "azurerm_resource_group" "test_group" {
-  name     = "rg-log-analytics-minimal-test-${random_string.resource_group_name_prefix.result}"
+  name     = "${module.naming.resource_group.slug}-${module.naming.log_analytics_workspace.slug}-max-test-${local.unique_name_stub}"
   location = "uksouth"
 }
 
 module "terraform-azurerm-log-analytics" {
-  source                                = "../"
+  source                                = "../../"
   resource_group_name                   = azurerm_resource_group.test_group.name
-  name_prefix                           = random_string.resource_group_name_prefix.result
-  name_suffix                           = random_string.resource_group_name_prefix.result
+  prefix                                = [local.unique_name_stub]
+  suffix                                = [local.unique_name_stub]
   log_analytics_workspace_sku           = "PerGB2018"
   log_analytics_retention_in_days       = 730
   alternate_automation_account_location = "westeurope"
