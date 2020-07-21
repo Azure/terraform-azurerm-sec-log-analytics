@@ -19,6 +19,7 @@ resource "azurerm_resource_group" "test_group" {
 module "terraform-azurerm-log-analytics" {
   source                                = "../../"
   resource_group_name                   = azurerm_resource_group.test_group.name
+  resource_group_location               = azurerm_resource_group.test_group.location
   prefix                                = [local.unique_name_stub]
   suffix                                = [local.unique_name_stub]
   log_analytics_workspace_sku           = "PerGB2018"
